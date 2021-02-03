@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">github-finder</string>
+
+    <string name="image_of_github_user_description">Image of github user</string>
+    <string name="label_unexpected_error">Unexpected error</string>
+    <string name="label_search_your_username">Search your username</string>
+</resources>
