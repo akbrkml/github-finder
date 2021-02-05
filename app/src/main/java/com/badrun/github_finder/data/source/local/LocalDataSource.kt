@@ -9,12 +9,8 @@ import javax.inject.Singleton
 @Singleton
 class LocalDataSource @Inject constructor(private val githubUserDao: GithubUserDao) {
 
-    fun getAllGithubUser(): Flow<List<GithubUserEntity>> = githubUserDao.getAll()
-
-    fun getGithubByUsername(username: String): Flow<GithubUserEntity?> = githubUserDao.getByUsername(username)
+    fun searchUsers(username: String): Flow<List<GithubUserEntity>> = githubUserDao.getListByUsername(username)
 
     suspend fun insertGithubUser(githubUserList: List<GithubUserEntity>) = githubUserDao.insert(githubUserList)
-
-    suspend fun insertGithubUser(githubUserEntity: GithubUserEntity) = githubUserDao.insert(githubUserEntity)
 
 }

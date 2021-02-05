@@ -23,7 +23,7 @@ class HeaderInterceptor(
             var request = chain.request()
             if (request.header(NO_AUTHENTICATION) == null) {
                 request = chain.request().newBuilder()
-                    .addHeader(AUTHORIZATION, "token ${BuildConfig.TOKEN}")
+                    .addHeader(TOKEN, BuildConfig.TOKEN)
                     .build()
             }
 

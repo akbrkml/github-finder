@@ -1,24 +1,13 @@
 package com.badrun.github_finder.base
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseRecyclerViewAdapter<T : Any> : ListAdapter<T, RecyclerView.ViewHolder>(BaseItemCallback<T>()) {
+abstract class BaseRecyclerViewAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
         getViewHolder(parent, viewType)
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (position in currentList.indices) {
-            (holder as Binder<T>).bind(currentList[position])
-        }
-    }
-
-    abstract fun getViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder
-
-    interface Binder<in T> {
-        fun bind(item: T)
-    }
+    abstract fun getViewHolder(parent: ViewGroup, viewType: Int): VH
 
 }

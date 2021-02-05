@@ -5,6 +5,7 @@ import com.badrun.github_finder.data.Resource
 import com.badrun.github_finder.data.source.local.LocalDataSource
 import com.badrun.github_finder.data.source.remote.RemoteDataSource
 import com.badrun.github_finder.data.source.remote.network.ApiResponse
+import com.badrun.github_finder.data.source.remote.network.QUERY_SEARCH
 import com.badrun.github_finder.data.source.remote.response.GithubUserResponse
 import com.badrun.github_finder.domain.model.GithubUser
 import com.badrun.github_finder.domain.repository.IGithubRepository
@@ -23,7 +24,8 @@ class GithubRepository @Inject constructor(
     override fun searchUsers(query: Map<String, String>): Flow<Resource<List<GithubUser>>> =
         object : NetworkBoundResource<List<GithubUser>, List<GithubUserResponse>>() {
             override fun loadFromDB(): Flow<List<GithubUser>> {
-                return localDataSource.getAllGithubUser().map { GithubUserMapper.mapEntitiesToDomain(it) }
+                val username = query[QUERY_SEARCH] ?: ""
+                return localDataSource.searchUsers(username).map { GithubUserMapper.mapEntitiesToDomain(it) }
             }
 
             override fun shouldFetch(data: List<GithubUser>?): Boolean = true
