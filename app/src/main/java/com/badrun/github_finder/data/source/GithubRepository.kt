@@ -24,7 +24,7 @@ class GithubRepository @Inject constructor(
     override fun searchUsers(query: Map<String, String>): Flow<Resource<List<GithubUser>>> =
         object : NetworkBoundResource<List<GithubUser>, List<GithubUserResponse>>() {
             override fun loadFromDB(): Flow<List<GithubUser>> {
-                val username = query[QUERY_SEARCH] ?: ""
+                val username = "%${query[QUERY_SEARCH]}%"
                 return localDataSource.searchUsers(username).map { GithubUserMapper.mapEntitiesToDomain(it) }
             }
 
