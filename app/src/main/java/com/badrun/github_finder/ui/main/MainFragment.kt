@@ -27,7 +27,7 @@ class MainFragment : BaseFragment<MainFragmentBinding>() {
 
     private var coroutineJob: Job? = null
 
-    private var currentSearchText: String = ""
+    private var currentKeyword: String = ""
     private var currentPage = 1
 
     private lateinit var mainAdapter: MainAdapter
@@ -38,18 +38,18 @@ class MainFragment : BaseFragment<MainFragmentBinding>() {
         viewModel.githubUserList.observe(viewLifecycleOwner, {
             when (it) {
                 is Resource.Loading -> {
-                    showLoading()
+                    mainAdapter.showLoading()
                 }
                 is Resource.Success -> {
-                    hideLoading()
+                    mainAdapter.hideLoading()
                     mainAdapter.setData(it.data!!)
                 }
                 is Resource.Error -> {
-                    hideLoading()
+                    mainAdapter.hideLoading()
                     setMessage(it.message ?: getString(R.string.label_unexpected_error))
                 }
                 is Resource.Empty -> {
-                    hideLoading()
+                    mainAdapter.hideLoading()
                     if (currentPage == 1) setMessage(getString(R.string.msg_not_found))
                 }
             }
@@ -77,7 +77,7 @@ class MainFragment : BaseFragment<MainFragmentBinding>() {
 
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                viewModel.searchUsers(currentSearchText, page)
+                viewModel.searchUsers(currentKeyword, page)
                 currentPage = page
             }
         }
@@ -86,29 +86,22 @@ class MainFragment : BaseFragment<MainFragmentBinding>() {
 
     }
 
-    private fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideLoading() {
-        binding.progressBar.visibility = View.INVISIBLE
-    }
-
     private fun setMessage(message: String) {
         Snackbar.make(binding.main, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setupSearchView() {
         binding.searchView.setOnTextChanged { s, _, _, _ ->
-            if (currentSearchText != s.toString()) {
+            if (currentKeyword != s.toString()) {
                 coroutineJob?.cancel()
                 coroutineJob = GlobalScope.launch(Dispatchers.Main) {
                     delay(800)
-                    currentSearchText = s.toString()
+                    currentKeyword = s.toString()
                     mainAdapter.clear()
                     scrollListener.resetState()
                     currentPage = 1
                     viewModel.searchUsers(s.toString(), currentPage)
+                    requireActivity().hideSoftKeyboard()
                 }
             }
         }
